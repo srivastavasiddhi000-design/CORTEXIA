@@ -1,56 +1,38 @@
-import json
+import sqlite3
 
 
+def save_database_report(module, result):
 
-def create_summary(result):
+    conn = sqlite3.connect("cortexia.db")
 
+    cursor = conn.cursor()
 
-    summary = {
+    cursor.execute("""
 
+    INSERT INTO reports(
 
-        "module":
-        "CORTEXIA Neural Health System",
+    module,
+    status,
+    score,
+    message
 
+    )
 
-        "analysis":
-        "AI Clinical Assessment",
+    VALUES(?,?,?,?)
 
+    """,
 
-        "risk":
-        result["risk"],
+    (
 
+    module,
+    result["status"],
+    result["score"],
+    result["message"]
 
-        "score":
-        result["score"],
+    )
 
+    )
 
-        "status":
-        result["status"]
+    conn.commit()
 
-
-    }
-
-
-    return summary
-
-
-
-
-
-def save_report(data):
-
-
-    with open(
-        "health_report.json",
-        "w"
-    ) as file:
-
-
-        json.dump(
-            data,
-            file,
-            indent=4
-        )
-
-
-    return True
+    conn.close()

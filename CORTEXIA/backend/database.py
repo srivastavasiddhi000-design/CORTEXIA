@@ -1,12 +1,15 @@
 import sqlite3
-import os
 
 
 DB = "cortexia.db"
 
 
+
 def connect():
+
     return sqlite3.connect(DB)
+
+
 
 
 
@@ -16,15 +19,23 @@ def create_table():
     cursor = conn.cursor()
 
 
+    # =====================
     # REPORTS
+    # =====================
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS reports(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+
         module TEXT,
+
         status TEXT,
+
         score INTEGER,
+
         summary TEXT,
+
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
     )
@@ -32,15 +43,23 @@ def create_table():
 
 
 
+    # =====================
     # DOSSIER
+    # =====================
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS dossier(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+
         cardio INTEGER,
+
         metabolic INTEGER,
+
         renal INTEGER,
+
         overall INTEGER,
+
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
     )
@@ -48,14 +67,22 @@ def create_table():
 
 
 
-    # RISK
+
+    # =====================
+    # RISK HISTORY
+    # =====================
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS risk_history(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+
         module TEXT,
+
         risk_level TEXT,
+
         score INTEGER,
+
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
     )
@@ -63,18 +90,27 @@ def create_table():
 
 
 
-    # RECORDS
+
+    # =====================
+    # MEDICAL RECORDS
+    # =====================
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS medical_records(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+
         module TEXT,
+
         prediction TEXT,
+
         confidence INTEGER,
+
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
     )
     """)
+
 
 
     conn.commit()
@@ -84,9 +120,15 @@ def create_table():
 
 
 
+# =====================
+# DOSSIER
+# =====================
+
+
 def get_dossier():
 
     conn = connect()
+
 
     row = conn.execute(
     """
@@ -101,16 +143,18 @@ def get_dossier():
     conn.close()
 
 
+
     if row:
 
         return {
 
-        "cardio":row[0],
-        "metabolic":row[1],
-        "renal":row[2],
-        "overall":row[3]
+            "cardio":row[0],
+            "metabolic":row[1],
+            "renal":row[2],
+            "overall":row[3]
 
         }
+
 
 
     return {
@@ -126,22 +170,82 @@ def get_dossier():
 
 
 
-def save_report(
-module,
-status,
-score,
-summary=""
+
+def update_dossier(
+    cardio,
+    metabolic,
+    renal
 ):
 
+
+    overall = int(
+        (cardio+metabolic+renal)/3
+    )
+
+
     conn=connect()
+
+
+    conn.execute(
+    """
+    INSERT INTO dossier
+    (
+    cardio,
+    metabolic,
+    renal,
+    overall
+    )
+
+    VALUES(?,?,?,?)
+
+    """,
+    (
+    cardio,
+    metabolic,
+    renal,
+    overall
+    )
+    )
+
+
+    conn.commit()
+    conn.close()
+
+
+
+
+
+
+
+# =====================
+# REPORTS
+# =====================
+
+
+
+def save_report(
+    module,
+    status,
+    score,
+    summary=""
+):
+
+
+    conn=connect()
+
 
     conn.execute(
     """
     INSERT INTO reports
     (
-    module,status,score,summary
+    module,
+    status,
+    score,
+    summary
     )
+
     VALUES(?,?,?,?)
+
     """,
     (
     module,
@@ -151,6 +255,7 @@ summary=""
     )
     )
 
+
     conn.commit()
     conn.close()
 
@@ -158,9 +263,12 @@ summary=""
 
 
 
+
 def get_reports():
 
+
     conn=connect()
+
 
     data=conn.execute(
     """
@@ -174,11 +282,14 @@ def get_reports():
     FROM reports
 
     ORDER BY id DESC
+
     """
     ).fetchall()
 
 
+
     conn.close()
+
 
     return data
 
@@ -186,13 +297,23 @@ def get_reports():
 
 
 
+
+
+# =====================
+# MEDICAL RECORDS
+# =====================
+
+
+
 def save_record(
-module,
-prediction,
-confidence
+    module,
+    prediction,
+    confidence
 ):
 
+
     conn=connect()
+
 
     conn.execute(
     """
@@ -202,13 +323,16 @@ confidence
     prediction,
     confidence
     )
+
     VALUES(?,?,?)
+
     """,
     (
     module,
     prediction,
     confidence
     )
+
     )
 
 
@@ -219,9 +343,12 @@ confidence
 
 
 
+
 def get_records():
 
+
     conn=connect()
+
 
     data=conn.execute(
     """
@@ -234,11 +361,14 @@ def get_records():
     FROM medical_records
 
     ORDER BY id DESC
+
     """
     ).fetchall()
 
 
+
     conn.close()
+
 
     return data
 
@@ -247,13 +377,21 @@ def get_records():
 
 
 
+# =====================
+# RISK
+# =====================
+
+
+
 def save_risk(
-module,
-risk_level,
-score
+    module,
+    level,
+    score
 ):
 
+
     conn=connect()
+
 
     conn.execute(
     """
@@ -263,14 +401,18 @@ score
     risk_level,
     score
     )
+
     VALUES(?,?,?)
+
     """,
     (
     module,
-    risk_level,
+    level,
     score
     )
+
     )
+
 
     conn.commit()
     conn.close()
@@ -281,7 +423,9 @@ score
 
 def get_risks():
 
+
     conn=connect()
+
 
     data=conn.execute(
     """
@@ -294,10 +438,13 @@ def get_risks():
     FROM risk_history
 
     ORDER BY id DESC
+
     """
     ).fetchall()
 
 
+
     conn.close()
+
 
     return data
