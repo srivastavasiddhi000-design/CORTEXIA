@@ -1,6 +1,27 @@
-import streamlit as st
 import sys
 import os
+
+BASE_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "../../NEXORA-Multi-AI-Agent"
+    )
+)
+
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+sys.path.append(
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "../../NEXORA-Multi-AI-Agent"
+        )
+    )
+)
+
+import streamlit as st
+
 
 
 # NEXORA PROJECT PATH
