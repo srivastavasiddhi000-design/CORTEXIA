@@ -1,16 +1,24 @@
 import sys
 import os
 
-sys.path.append(
-    os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "../NEXORA-Multi-AI-Agent"
-        )
+ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        ".."
     )
 )
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+PATHS = [
+    ROOT,
+    os.path.join(ROOT, "app"),
+    os.path.join(ROOT, "backend"),
+    os.path.join(ROOT, "modules"),
+    os.path.join(ROOT, "NEXORA-Multi-AI-Agent")
+]
+
+for p in PATHS:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 import streamlit as st
 from backend.database import create_table, get_dossier
 from components.nexora_widget import show_nexora
