@@ -1,36 +1,26 @@
+import streamlit as st
 import sys
 import os
 
-BASE_DIR = os.path.abspath(
+
+ROOT = os.path.abspath(
     os.path.join(
         os.path.dirname(__file__),
-        "../../NEXORA-Multi-AI-Agent"
+        "../.."
     )
 )
 
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
 
-sys.path.append(
-    os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "../../NEXORA-Multi-AI-Agent"
-        )
-    )
+NEXORA_PATH = os.path.join(
+    ROOT,
+    "NEXORA-Multi-AI-Agent"
 )
 
-import streamlit as st
+
+if NEXORA_PATH not in sys.path:
+    sys.path.insert(0, NEXORA_PATH)
 
 
-
-# NEXORA PROJECT PATH
-sys.path.append(
-    os.path.join(
-        os.getcwd(),
-        "NEXORA-Multi-AI-Agent"
-    )
-)
 
 from nexora_agents import (
     research_agent,
@@ -40,11 +30,11 @@ from nexora_agents import (
 )
 
 
+
 class NexoraAgent:
 
     def run(self, query):
 
-        # simple routing
         q = query.lower()
 
         if "research" in q:
@@ -61,14 +51,13 @@ class NexoraAgent:
 
 
 
-# initialize agent once
-if "nexora_agent" not in st.session_state:
-
-    st.session_state.nexora_agent = NexoraAgent()
-
-
-
 def show_nexora():
+
+
+    if "nexora_agent" not in st.session_state:
+
+        st.session_state.nexora_agent = NexoraAgent()
+
 
 
     st.markdown(
@@ -97,6 +86,7 @@ def show_nexora():
 
 
     with col1:
+
         st.markdown("🤖")
 
 
@@ -116,6 +106,7 @@ def show_nexora():
         )
 
 
+
     question = st.text_input(
         "",
         placeholder="Ask your health question...",
@@ -123,16 +114,20 @@ def show_nexora():
     )
 
 
+
     if st.button(
         "ASK NEXORA",
         key="nexora_btn"
     ):
 
+
         if question:
+
 
             with st.spinner(
                 "NEXORA AI THINKING..."
             ):
+
 
                 response = (
                     st.session_state
